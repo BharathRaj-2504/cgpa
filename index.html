@@ -20,26 +20,38 @@
     </header>
 
     <main class="container">
-        <!-- Subjects Section -->
-        <section class="card" aria-labelledby="subjects-title">
-            <h2 id="subjects-title">Semester Subjects</h2>
-            <div id="subjectContainer">
-                <!-- Subject rows will be injected here -->
+        <!-- Subjects Section (Editor) -->
+        <section id="subjectSection" class="card" aria-labelledby="subjects-title">
+            <div class="card-header">
+                <h2 id="subjects-title">Semester Subjects</h2>
+                <button id="editSubjectsBtn" class="btn btn-secondary btn-sm" style="display: none;">
+                    ✏️ Edit Subjects
+                </button>
             </div>
-            <div class="button-group">
-                <button id="addSubjectBtn" class="btn btn-primary">
-                    <span>+</span> Add Subject
-                </button>
-                <button id="resetBtn" class="btn btn-secondary">
-                    Reset All
-                </button>
+            
+            <div id="subjectSummaryHeader" class="summary-header" style="display: none;">
+                <span id="summaryText">0 Subjects Entered</span>
+            </div>
+
+            <div id="editorContent">
+                <div id="subjectContainer">
+                    <!-- Subject rows will be injected here -->
+                </div>
+                <div class="button-group">
+                    <button id="addSubjectBtn" class="btn btn-primary">
+                        <span>+</span> Add Subject
+                    </button>
+                    <button id="resetBtn" class="btn btn-secondary">
+                        Reset All
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- Result & Improvement Section -->
-        <section class="card sticky-footer" aria-labelledby="result-title">
-            <h2 id="result-title" class="mobile-hide">Semester Result</h2>
-            <div class="result-grid">
+        <div id="analysisGrid" class="analysis-grid">
+            <!-- Result Section -->
+            <section class="card result-card" aria-labelledby="result-title">
+                <h2 id="result-title">Semester Result</h2>
                 <div class="result-box">
                     <span class="result-label">Semester GPA</span>
                     <div class="cgpa-display highlight" id="cgpaValue">0.00</div>
@@ -59,23 +71,25 @@
                 </div>
                 
                 <div class="analyzer-intro" id="analyzerIntro">
-                    <p>Enter subjects to see improvement suggestions below.</p>
+                    <p>Enter subjects and calculate to see analysis.</p>
                 </div>
-            </div>
-            <button id="calculateBtn" class="btn btn-primary btn-calculate">
-                Calculate Semester GPA
-            </button>
-        </section>
 
-        <!-- Improvement Analyzer Section -->
-        <section id="improvementSection" class="card" style="display: none;">
-            <h2>🎯 Improvement Suggestions</h2>
-            <p class="section-desc">Toggle grades to see how specific improvements impact your semester GPA.</p>
-            <div id="improvementContainer" class="improvement-grid">
-                <!-- Improvement cards will be injected here -->
-            </div>
-        </section>
+                <button id="calculateBtn" class="btn btn-primary btn-calculate">
+                    Calculate GPA
+                </button>
+            </section>
+
+            <!-- Improvement Analyzer Section -->
+            <section id="improvementSection" class="card" style="display: none;">
+                <h2>🎯 Improvement Suggestions</h2>
+                <p class="section-desc">Toggle grades to see how improvements impact your GPA.</p>
+                <div id="improvementContainer" class="improvement-grid">
+                    <!-- Improvement cards will be injected here -->
+                </div>
+            </section>
+        </div>
     </main>
+
 
 
 

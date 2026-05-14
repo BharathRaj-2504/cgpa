@@ -1,5 +1,5 @@
 import { calculateCGPA, generateImprovementSuggestions } from './cgpa.js';
-import { createSubjectRow, displayResult, showToast, clearUI, renderImprovementSuggestions } from './ui.js';
+import { createSubjectRow, displayResult, showToast, clearUI, renderImprovementSuggestions, collapseSubjectSection, expandSubjectSection } from './ui.js';
 import { saveSubjects, getSubjects, clearAllData } from './storage.js';
 import { initializeTheme, toggleTheme } from './theme.js';
 
@@ -9,6 +9,7 @@ const addSubjectBtn = document.getElementById('addSubjectBtn');
 const calculateBtn = document.getElementById('calculateBtn');
 const resetBtn = document.getElementById('resetBtn');
 const themeToggle = document.getElementById('themeToggle');
+const editSubjectsBtn = document.getElementById('editSubjectsBtn');
 
 // State Management
 let activeImprovements = {}; // { subjectIndex: improvedGrade }
@@ -22,12 +23,10 @@ function init() {
     const savedSubjects = getSubjects();
     if (savedSubjects.length > 0) {
         savedSubjects.forEach(sub => addSubject(sub));
+        performCalculation(true); // Initial calculation if data exists
     } else {
-        for (let i = 0; i < 3; i++) addSubject();
-    }
-
-    if (savedSubjects.length > 0) {
-        performCalculation();
+        // Start with only ONE subject row as per requirements
+        addSubject();
     }
 }
 
@@ -65,14 +64,14 @@ function getFormData(applyImprovements = false) {
 
 /**
  * Main calculation and analysis flow
+ * @param {boolean} isInitial - Whether this is the initial load
  */
-function performCalculation() {
-    const subjects = getFormData(true); // Apply toggled improvements
-    const rawSubjects = getFormData(false); // Original grades for analyzer logic
+function performCalculation(isInitial = false) {
+    const subjects = getFormData(true); 
+    const rawSubjects = getFormData(false); 
 
     if (subjects.length === 0) {
-        const section = document.getElementById('improvementSection');
-        if (section) section.style.display = 'none';
+        if (!isInitial) showToast('Add at least one subject');
         return;
     }
 
@@ -88,11 +87,15 @@ function performCalculation() {
     displayResult(improvedResult, gain);
     saveSubjects(rawSubjects);
 
-    // 2. Improvement Suggestions
+    // 4. Improvement Suggestions
     const suggestions = generateImprovementSuggestions(rawSubjects);
     renderImprovementSuggestions(suggestions);
     
-    // Restore toggle states if suggestions re-rendered
+    // 5. UX Transition: Collapse Editor
+    if (!isInitial) {
+        collapseSubjectSection(rawSubjects);
+    }
+
     restoreToggles();
 }
 
@@ -117,8 +120,12 @@ addSubjectBtn.addEventListener('click', () => {
 });
 
 calculateBtn.addEventListener('click', () => {
-    activeImprovements = {}; // Reset analyzer on manual calculate
+    activeImprovements = {}; 
     performCalculation();
+});
+
+editSubjectsBtn.addEventListener('click', () => {
+    expandSubjectSection();
 });
 
 resetBtn.addEventListener('click', () => {
@@ -129,6 +136,7 @@ resetBtn.addEventListener('click', () => {
         displayResult({ totalCredits: 0, totalPoints: 0, cgpa: '0.00' });
         const section = document.getElementById('improvementSection');
         if (section) section.style.display = 'none';
+        expandSubjectSection();
         addSubject();
         showToast('Data reset', 'success');
     }
@@ -143,7 +151,10 @@ subjectContainer.addEventListener('click', (e) => {
     if (e.target.closest('.remove-btn')) {
         const row = e.target.closest('.subject-row');
         row.remove();
-        performCalculation();
+        // If we remove all rows, add one back
+        if (document.querySelectorAll('.subject-row').length === 0) {
+            addSubject();
+        }
     }
 });
 
@@ -161,11 +172,12 @@ document.addEventListener('change', (e) => {
             e.target.closest('.improvement-card').classList.remove('active');
         }
         
-        performCalculation();
+        performCalculation(true); // Use true to prevent collapsing again
     }
 });
 
 // Start
 init();
+
 
 

@@ -11,39 +11,84 @@ export function createSubjectRow(subject = {}) {
     const row = document.createElement('div');
     row.className = 'subject-row';
     
-    // Using a template for cleaner structure
+    // Better Placeholders
+    const subjectNames = ["Computer Networks", "Operating Systems", "Data Structures", "Engineering Mathematics", "Digital Logic"];
+    const randomPlaceholder = subjectNames[Math.floor(Math.random() * subjectNames.length)];
+
     row.innerHTML = `
-        <input 
-            type="text" 
-            placeholder="Subject Name" 
-            class="subject-name" 
-            value="${subject.name || ''}"
-            aria-label="Subject Name"
-        >
-        <input 
-            type="number" 
-            placeholder="Credits" 
-            class="subject-credit" 
-            min="1" 
-            value="${subject.credits || ''}"
-            aria-label="Credits"
-        >
-        <select class="subject-grade" aria-label="Expected Grade">
-            <option value="O" ${subject.grade === 'O' ? 'selected' : ''}>O (10)</option>
-            <option value="A+" ${subject.grade === 'A+' ? 'selected' : ''}>A+ (9)</option>
-            <option value="A" ${subject.grade === 'A' ? 'selected' : ''}>A (8)</option>
-            <option value="B+" ${subject.grade === 'B+' ? 'selected' : ''}>B+ (7)</option>
-            <option value="B" ${subject.grade === 'B' ? 'selected' : ''}>B (6)</option>
-            <option value="C" ${subject.grade === 'C' ? 'selected' : ''}>C (5)</option>
-            <option value="U" ${subject.grade === 'U' ? 'selected' : ''}>U (0)</option>
-        </select>
-        <button class="btn btn-danger remove-btn" title="Remove Subject" aria-label="Remove Subject">
-            🗑️
+        <div class="row-inputs">
+            <input type="text" class="subject-name" placeholder="e.g. ${randomPlaceholder}" value="${subject.name || ''}">
+            <input type="number" class="subject-credit" placeholder="Credits" value="${subject.credits || ''}" min="1" max="10">
+            <select class="subject-grade">
+                <option value="" disabled ${!subject.grade ? 'selected' : ''}>Select Grade</option>
+                <option value="O" ${subject.grade === 'O' ? 'selected' : ''}>O (10)</option>
+                <option value="A+" ${subject.grade === 'A+' ? 'selected' : ''}>A+ (9)</option>
+                <option value="A" ${subject.grade === 'A' ? 'selected' : ''}>A (8)</option>
+                <option value="B+" ${subject.grade === 'B+' ? 'selected' : ''}>B+ (7)</option>
+                <option value="B" ${subject.grade === 'B' ? 'selected' : ''}>B (6)</option>
+                <option value="C" ${subject.grade === 'C' ? 'selected' : ''}>C (5)</option>
+                <option value="U" ${subject.grade === 'U' ? 'selected' : ''}>U (0)</option>
+            </select>
+        </div>
+        <button class="remove-btn" title="Remove Subject">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
         </button>
     `;
 
     return row;
 }
+
+/**
+ * Collapses the subject entry section
+ * @param {Array} subjects 
+ */
+export function collapseSubjectSection(subjects) {
+    const section = document.getElementById('subjectSection');
+    const editBtn = document.getElementById('editSubjectsBtn');
+    const summary = document.getElementById('subjectSummaryHeader');
+    const intro = document.getElementById('analyzerIntro');
+    const calculateBtn = document.getElementById('calculateBtn');
+
+    if (!section) return;
+
+    section.classList.add('collapsed');
+    editBtn.style.display = 'block';
+    summary.style.display = 'flex';
+    if (intro) intro.style.display = 'none';
+    if (calculateBtn) calculateBtn.style.display = 'none';
+
+    updateCompactSummary(subjects);
+}
+
+/**
+ * Expands the subject entry section
+ */
+export function expandSubjectSection() {
+    const section = document.getElementById('subjectSection');
+    const editBtn = document.getElementById('editSubjectsBtn');
+    const summary = document.getElementById('subjectSummaryHeader');
+    const calculateBtn = document.getElementById('calculateBtn');
+
+    if (!section) return;
+
+    section.classList.remove('collapsed');
+    editBtn.style.display = 'none';
+    summary.style.display = 'none';
+    if (calculateBtn) calculateBtn.style.display = 'block';
+}
+
+/**
+ * Updates the compact summary text
+ * @param {Array} subjects 
+ */
+function updateCompactSummary(subjects) {
+    const summaryText = document.getElementById('summaryText');
+    if (!summaryText) return;
+
+    const totalCredits = subjects.reduce((sum, s) => sum + (parseFloat(s.credits) || 0), 0);
+    summaryText.textContent = `${subjects.length} Subjects • ${totalCredits} Total Credits`;
+}
+
 
 /**
  * Displays the semester calculation results
