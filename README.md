@@ -4,26 +4,26 @@
 [![Platform: GitHub Pages](https://img.shields.io/badge/Platform-GitHub%20Pages-brightgreen.svg)](https://pages.github.com/)
 [![Stack: Vanilla JS](https://img.shields.io/badge/Stack-Pure%20HTML/CSS/JS-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
-A lightweight, maintainable, and premium CGPA Predictor designed specifically for students of **Rajalakshmi Engineering College (REC)**. Built with pure Vanilla JavaScript, this tool offers a fast and accurate way to predict your CGPA without any backend or external frameworks.
+A lightweight, maintainable, and premium CGPA Predictor designed specifically for students of **Rajalakshmi Engineering College (REC)**. Built with pure Vanilla JavaScript, this tool focuses on calculating and optimizing your semester performance.
 
 ---
 
 ## ✨ Features
 
+- 🎯 **Semester Improvement Analyzer**: Interactive suggestions to upgrade your grades and see instant impact on your semester GPA.
 - 🚀 **Dynamic Subject Management**: Add or remove subjects on the fly.
 - 🌓 **Dark/Light Mode**: Premium dark mode support with theme persistence.
-- 📱 **Mobile First Design**: Fully responsive UI with a sticky calculate button for mobile users.
-- 💾 **Local Storage Persistence**: Your data is automatically saved locally, so you don't lose progress on refresh.
-- 🎨 **Modern Aesthetics**: Glassmorphism effects, smooth transitions, and a clean card-based layout.
+- 📱 **Mobile First Design**: Fully responsive UI with a sticky footer for results.
+- 💾 **Local Storage Persistence**: Your subjects are automatically saved locally.
+- 🎨 **Modern Aesthetics**: Glassmorphism, smooth animations, and refined typography.
 - 📐 **REC Grade System**: Pre-configured with REC's official grade point values.
-- ⚡ **Lightweight**: Zero dependencies, ensuring blazing fast load times.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Structure**: Semantic HTML5
-- **Styling**: Vanilla CSS3 (Custom Properties, Flexbox, Grid)
+- **Styling**: Vanilla CSS3 (Custom Properties, Flexbox, Grid, Glassmorphism)
 - **Logic**: Vanilla JavaScript (ES6 Modules)
 - **Storage**: Browser LocalStorage API
 
@@ -41,7 +41,7 @@ A lightweight, maintainable, and premium CGPA Predictor designed specifically fo
 ├── js/
 │   ├── app.js          # Main orchestrator
 │   ├── ui.js           # DOM manipulation & View logic
-│   ├── cgpa.js         # Calculation engine
+│   ├── cgpa.js         # Calculation & Analysis engine
 │   ├── storage.js      # Data persistence logic
 │   └── theme.js        # Theme management
 └── assets/             # Images, Icons, and Logos
@@ -49,11 +49,10 @@ A lightweight, maintainable, and premium CGPA Predictor designed specifically fo
 
 ---
 
-## 🧮 CGPA Calculation
+## 🧮 Calculation Formula
 
-The calculator follows the standard academic formula used at REC:
-
-$$CGPA = \frac{\sum (Grade Points \times Credits)}{\sum (Total Credits)}$$
+### Semester GPA
+$$GPA = \frac{\sum (Grade Points \times Credits)}{\sum (Total Semester Credits)}$$
 
 ### Grade System:
 | Grade | Point |
@@ -65,6 +64,8 @@ $$CGPA = \frac{\sum (Grade Points \times Credits)}{\sum (Total Credits)}$$
 | B     | 6     |
 | C     | 5     |
 | U     | 0     |
+
+
 
 ---
 

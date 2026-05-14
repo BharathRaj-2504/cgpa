@@ -1,8 +1,3 @@
-/**
- * Persistence layer for REC CGPA Predictor
- * Uses localStorage to save and retrieve data.
- */
-
 const STORAGE_KEYS = {
     SUBJECTS: "rec_cgpa_subjects",
     THEME: "rec_cgpa_theme"
@@ -56,4 +51,6 @@ export function getTheme() {
 export function clearAllData() {
     localStorage.removeItem(STORAGE_KEYS.SUBJECTS);
     // Note: We keep the theme preference even on reset
-}
+}
+
+

@@ -1,5 +1,5 @@
-import { calculateCGPA } from './cgpa.js';
-import { createSubjectRow, displayResult, showToast, clearUI } from './ui.js';
+import { calculateCGPA, generateImprovementSuggestions } from './cgpa.js';
+import { createSubjectRow, displayResult, showToast, clearUI, renderImprovementSuggestions } from './ui.js';
 import { saveSubjects, getSubjects, clearAllData } from './storage.js';
 import { initializeTheme, toggleTheme } from './theme.js';
 
@@ -10,23 +10,22 @@ const calculateBtn = document.getElementById('calculateBtn');
 const resetBtn = document.getElementById('resetBtn');
 const themeToggle = document.getElementById('themeToggle');
 
+// State Management
+let activeImprovements = {}; // { subjectIndex: improvedGrade }
+
 /**
  * Initialize the application
  */
 function init() {
-    // 1. Setup Theme
     initializeTheme();
 
-    // 2. Load Saved Data
     const savedSubjects = getSubjects();
     if (savedSubjects.length > 0) {
         savedSubjects.forEach(sub => addSubject(sub));
     } else {
-        // Add 3 empty rows by default for new users
         for (let i = 0; i < 3; i++) addSubject();
     }
 
-    // 3. Initial calculation if data exists
     if (savedSubjects.length > 0) {
         performCalculation();
     }
@@ -34,7 +33,6 @@ function init() {
 
 /**
  * Adds a subject row to the UI
- * @param {Object} subject 
  */
 function addSubject(subject = {}) {
     const row = createSubjectRow(subject);
@@ -42,77 +40,97 @@ function addSubject(subject = {}) {
 }
 
 /**
- * Extracts subject data from the DOM
- * @returns {Array|null}
+ * Extracts subject data from the DOM, applying active improvements if any
  */
-function getFormData() {
+function getFormData(applyImprovements = false) {
     const rows = document.querySelectorAll('.subject-row');
     const subjects = [];
 
-    for (const row of rows) {
+    rows.forEach((row, index) => {
         const name = row.querySelector('.subject-name').value.trim();
         const credits = row.querySelector('.subject-credit').value;
-        const grade = row.querySelector('.subject-grade').value;
+        const originalGrade = row.querySelector('.subject-grade').value;
+        
+        const grade = (applyImprovements && activeImprovements[index]) 
+            ? activeImprovements[index] 
+            : originalGrade;
 
-        // Validation
-        if (!name) {
-            showToast('Please enter all subject names');
-            row.querySelector('.subject-name').focus();
-            return null;
+        if (name && credits) {
+            subjects.push({ name, credits, grade });
         }
-
-        if (!credits || credits <= 0) {
-            showToast('Credits must be a positive number');
-            row.querySelector('.subject-credit').focus();
-            return null;
-        }
-
-        subjects.push({ name, credits, grade });
-    }
+    });
 
     return subjects;
 }
 
 /**
- * Main calculation logic
+ * Main calculation and analysis flow
  */
 function performCalculation() {
-    const subjects = getFormData();
-    
-    if (!subjects) return; // Validation failed
+    const subjects = getFormData(true); // Apply toggled improvements
+    const rawSubjects = getFormData(false); // Original grades for analyzer logic
 
     if (subjects.length === 0) {
-        showToast('Add at least one subject');
+        const section = document.getElementById('improvementSection');
+        if (section) section.style.display = 'none';
         return;
     }
 
-    const result = calculateCGPA(subjects);
-    displayResult(result);
-    saveSubjects(subjects);
+    // 1. Semester Result (Improved)
+    const improvedResult = calculateCGPA(subjects);
+    
+    // 2. Baseline Result (Original)
+    const baselineResult = calculateCGPA(rawSubjects);
+    
+    // 3. Calculate Gain
+    const gain = parseFloat(improvedResult.cgpa) - parseFloat(baselineResult.cgpa);
+    
+    displayResult(improvedResult, gain);
+    saveSubjects(rawSubjects);
+
+    // 2. Improvement Suggestions
+    const suggestions = generateImprovementSuggestions(rawSubjects);
+    renderImprovementSuggestions(suggestions);
+    
+    // Restore toggle states if suggestions re-rendered
+    restoreToggles();
+}
+
+/**
+ * Syncs the UI toggles with activeImprovements state
+ */
+function restoreToggles() {
+    const toggles = document.querySelectorAll('.improvement-toggle');
+    toggles.forEach(t => {
+        const idx = t.dataset.index;
+        if (activeImprovements[idx]) {
+            t.checked = true;
+            t.closest('.improvement-card').classList.add('active');
+        }
+    });
 }
 
 // Event Listeners
 
 addSubjectBtn.addEventListener('click', () => {
     addSubject();
-    // Scroll to bottom of container on mobile
-    if (window.innerWidth < 640) {
-        addSubjectBtn.scrollIntoView({ behavior: 'smooth' });
-    }
 });
 
 calculateBtn.addEventListener('click', () => {
+    activeImprovements = {}; // Reset analyzer on manual calculate
     performCalculation();
 });
 
 resetBtn.addEventListener('click', () => {
-    if (confirm('Are you sure you want to clear all data?')) {
+    if (confirm('Clear all data?')) {
         clearUI();
         clearAllData();
+        activeImprovements = {};
         displayResult({ totalCredits: 0, totalPoints: 0, cgpa: '0.00' });
-        // Add one empty row back
+        const section = document.getElementById('improvementSection');
+        if (section) section.style.display = 'none';
         addSubject();
-        showToast('Data reset successfully', 'success');
+        showToast('Data reset', 'success');
     }
 });
 
@@ -124,20 +142,30 @@ themeToggle.addEventListener('click', () => {
 subjectContainer.addEventListener('click', (e) => {
     if (e.target.closest('.remove-btn')) {
         const row = e.target.closest('.subject-row');
-        row.style.opacity = '0';
-        row.style.transform = 'translateX(20px)';
-        setTimeout(() => {
-            row.remove();
-            // Automatically recalculate after removal if there's data
-            const subjects = getFormData();
-            if (subjects) {
-                const result = calculateCGPA(subjects);
-                displayResult(result);
-                saveSubjects(subjects);
-            }
-        }, 300);
+        row.remove();
+        performCalculation();
     }
 });
 
-// Start the app
-init();
+// Event Delegation for Improvement Toggles
+document.addEventListener('change', (e) => {
+    if (e.target.classList.contains('improvement-toggle')) {
+        const index = e.target.dataset.index;
+        const grade = e.target.dataset.grade;
+        
+        if (e.target.checked) {
+            activeImprovements[index] = grade;
+            e.target.closest('.improvement-card').classList.add('active');
+        } else {
+            delete activeImprovements[index];
+            e.target.closest('.improvement-card').classList.remove('active');
+        }
+        
+        performCalculation();
+    }
+});
+
+// Start
+init();
+
+

@@ -41,4 +41,57 @@ export function calculateCGPA(subjects) {
         totalPoints,
         cgpa
     };
-}
+}
+
+/**
+ * Returns the next possible grade in the REC system
+ * @param {string} currentGrade 
+ * @returns {string|null}
+ */
+export function getNextGrade(currentGrade) {
+    const order = ["U", "C", "B", "B+", "A", "A+", "O"];
+    const index = order.indexOf(currentGrade);
+    
+    if (index === -1 || index === order.length - 1) return null;
+    return order[index + 1];
+}
+
+/**
+ * Generates improvement suggestions based on Semester GPA
+ * @param {Array} subjects 
+ * @returns {Array} List of suggestions
+ */
+export function generateImprovementSuggestions(subjects) {
+    const baselineResult = calculateCGPA(subjects);
+    const baselineGpa = parseFloat(baselineResult.cgpa);
+    
+    const suggestions = [];
+
+    subjects.forEach((subject, index) => {
+        const nextGrade = getNextGrade(subject.grade);
+        
+        if (nextGrade) {
+            // Calculate "What If"
+            const improvedSubjects = subjects.map((s, i) => 
+                i === index ? { ...s, grade: nextGrade } : s
+            );
+            
+            const improvedResult = calculateCGPA(improvedSubjects);
+            const improvedGpa = parseFloat(improvedResult.cgpa);
+            
+            const gain = (improvedGpa - baselineGpa).toFixed(2);
+            
+            suggestions.push({
+                subjectIndex: index,
+                subjectName: subject.name,
+                fromGrade: subject.grade,
+                toGrade: nextGrade,
+                gain: gain > 0 ? `+${gain}` : gain
+            });
+        }
+    });
+
+    return suggestions;
+}
+
+

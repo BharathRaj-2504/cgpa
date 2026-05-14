@@ -22,7 +22,7 @@
     <main class="container">
         <!-- Subjects Section -->
         <section class="card" aria-labelledby="subjects-title">
-            <h2 id="subjects-title">Subject Details</h2>
+            <h2 id="subjects-title">Semester Subjects</h2>
             <div id="subjectContainer">
                 <!-- Subject rows will be injected here -->
             </div>
@@ -36,15 +36,16 @@
             </div>
         </section>
 
-        <!-- Calculation Section -->
+        <!-- Result & Improvement Section -->
         <section class="card sticky-footer" aria-labelledby="result-title">
-            <h2 id="result-title" class="mobile-hide">Calculation Summary</h2>
-            <div class="result-box">
-                <button id="calculateBtn" class="btn btn-primary btn-calculate">
-                    Calculate CGPA
-                </button>
-                <div id="resultDisplay">
-                    <div class="cgpa-display" id="cgpaValue">0.00</div>
+            <h2 id="result-title" class="mobile-hide">Semester Result</h2>
+            <div class="result-grid">
+                <div class="result-box">
+                    <span class="result-label">Semester GPA</span>
+                    <div class="cgpa-display highlight" id="cgpaValue">0.00</div>
+                    <div id="totalGainContainer" class="total-gain-badge" style="display: none;">
+                        <span>+</span><span id="totalGainValue">0.00</span> Gain
+                    </div>
                     <div class="stats-grid">
                         <div class="stat-item">
                             <span class="stat-label">Total Credits</span>
@@ -56,9 +57,27 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="analyzer-intro" id="analyzerIntro">
+                    <p>Enter subjects to see improvement suggestions below.</p>
+                </div>
+            </div>
+            <button id="calculateBtn" class="btn btn-primary btn-calculate">
+                Calculate Semester GPA
+            </button>
+        </section>
+
+        <!-- Improvement Analyzer Section -->
+        <section id="improvementSection" class="card" style="display: none;">
+            <h2>🎯 Improvement Suggestions</h2>
+            <p class="section-desc">Toggle grades to see how specific improvements impact your semester GPA.</p>
+            <div id="improvementContainer" class="improvement-grid">
+                <!-- Improvement cards will be injected here -->
             </div>
         </section>
     </main>
+
+
 
     <footer>
         <p>&copy; 2026 REC CGPA Predictor. Crafted for RECians.</p>

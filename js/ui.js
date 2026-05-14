@@ -46,21 +46,38 @@ export function createSubjectRow(subject = {}) {
 }
 
 /**
- * Updates the display with calculation results
+ * Displays the semester calculation results
  * @param {Object} result - { totalCredits, totalPoints, cgpa }
+ * @param {number} gain - Optional improvement gain
  */
-export function displayResult(result) {
+export function displayResult(result, gain = 0) {
     const cgpaEl = document.getElementById('cgpaValue');
     const creditsEl = document.getElementById('totalCredits');
     const pointsEl = document.getElementById('totalPoints');
+    
+    // Gain elements
+    const gainContainer = document.getElementById('totalGainContainer');
+    const gainValueEl = document.getElementById('totalGainValue');
 
-    // Add a small animation effect on change
-    cgpaEl.style.transform = 'scale(1.1)';
-    setTimeout(() => cgpaEl.style.transform = 'scale(1)', 200);
+    if (!cgpaEl) return;
 
     cgpaEl.textContent = result.cgpa;
     creditsEl.textContent = result.totalCredits;
     pointsEl.textContent = result.totalPoints;
+
+    // Show/Hide Gain
+    if (gain > 0) {
+        gainContainer.style.display = 'inline-flex';
+        gainValueEl.textContent = gain.toFixed(2);
+    } else {
+        gainContainer.style.display = 'none';
+    }
+
+    // Add a small animation effect
+    cgpaEl.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+        cgpaEl.style.transform = 'scale(1)';
+    }, 200);
 }
 
 /**
@@ -86,4 +103,48 @@ export function showToast(message, type = 'error') {
 export function clearUI() {
     const container = document.getElementById('subjectContainer');
     container.innerHTML = '';
-}
+}
+
+/**
+ * Renders improvement suggestions as interactive cards
+ * @param {Array} suggestions 
+ */
+export function renderImprovementSuggestions(suggestions) {
+    const container = document.getElementById('improvementContainer');
+    const section = document.getElementById('improvementSection');
+    const intro = document.getElementById('analyzerIntro');
+
+    if (!container || !section) return;
+
+    if (suggestions.length === 0) {
+        section.style.display = 'none';
+        if (intro) intro.style.display = 'block';
+        return;
+    }
+
+    section.style.display = 'block';
+    if (intro) intro.style.display = 'none';
+    container.innerHTML = '';
+
+    suggestions.forEach((s, index) => {
+        const card = document.createElement('div');
+        card.className = 'improvement-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+
+        card.innerHTML = `
+            <div class="improvement-info">
+                <span class="improvement-subject">${s.subjectName}</span>
+                <span class="improvement-path">${s.fromGrade} → ${s.toGrade}</span>
+                <span class="improvement-gain">Potential Gain: ${s.gain}</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" class="improvement-toggle" data-index="${s.subjectIndex}" data-grade="${s.toGrade}">
+                <span class="slider"></span>
+            </label>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+
