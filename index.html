@@ -1,37 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>REC CGPA Predictor</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header class="header">
-      <h1>REC CGPA Predictor</h1>
-      <button id="themeToggle" class="theme-btn">Toggle Theme 1</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="REC CGPA Predictor - Lightweight and accurate CGPA calculator for Rajalakshmi Engineering College students.">
+    <title>REC CGPA Predictor | Rajalakshmi Engineering College</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>REC CGPA Predictor</h1>
+        <button id="themeToggle" class="btn btn-secondary" aria-label="Toggle Dark Mode">
+            <span id="themeIcon">🌙</span>
+        </button>
     </header>
+
     <main class="container">
-      <section class="card">
-        <h2>Add Subjects</h2>
-        <div id="subjectContainer"></div>
-        <div class="button-group">
-          <button id="addSubjectBtn">Add Subject</button>
-          <button id="resetBtn">Reset</button>
-        </div>
-      </section>
-      <section class="card sticky-card">
-        <button id="calculateBtn" class="calculate-btn">Calculate CGPA</button>
-        <div id="result" class="result-box">
-          <p>Total Credits: <span id="totalCredits">0</span></p>
-          <p>Total Grade Points: <span id="totalPoints">0</span></p>
-          <h2>CGPA: <span id="cgpa">0.00</span></h2>
-        </div>
-      </section>
+        <!-- Subjects Section -->
+        <section class="card" aria-labelledby="subjects-title">
+            <h2 id="subjects-title">Subject Details</h2>
+            <div id="subjectContainer">
+                <!-- Subject rows will be injected here -->
+            </div>
+            <div class="button-group">
+                <button id="addSubjectBtn" class="btn btn-primary">
+                    <span>+</span> Add Subject
+                </button>
+                <button id="resetBtn" class="btn btn-secondary">
+                    Reset All
+                </button>
+            </div>
+        </section>
+
+        <!-- Calculation Section -->
+        <section class="card sticky-footer" aria-labelledby="result-title">
+            <h2 id="result-title" class="mobile-hide">Calculation Summary</h2>
+            <div class="result-box">
+                <button id="calculateBtn" class="btn btn-primary btn-calculate">
+                    Calculate CGPA
+                </button>
+                <div id="resultDisplay">
+                    <div class="cgpa-display" id="cgpaValue">0.00</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Credits</span>
+                            <span class="stat-value" id="totalCredits">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Grade Points</span>
+                            <span class="stat-value" id="totalPoints">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
     <footer>
-      <p>Made for REC Students</p>
+        <p>&copy; 2026 REC CGPA Predictor. Crafted for RECians.</p>
     </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" role="alert"></div>
+
     <script type="module" src="js/app.js"></script>
-  </body>
+</body>
 </html>
+
