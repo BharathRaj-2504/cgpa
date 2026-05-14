@@ -1,0 +1,126 @@
+:root {
+  --bg-color: #f5f7fb;
+  --card-color: #ffffff;
+
+  --text-color: #222;
+  --primary: #2563eb;
+  --secondary: #1e40af;
+  --border: #dbe3f0;
+}
+body.dark {
+  --bg-color: #121826;
+  --card-color: #1e293b;
+  --text-color: #f8fafc;
+  --primary: #60a5fa;
+  --secondary: #3b82f6;
+  --border: #334155;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: 0.3s ease;
+  min-height: 100vh;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--card-color);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.container {
+  width: 90%;
+  max-width: 900px;
+  margin: 2rem auto;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--card-color);
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.subject-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 10px;
+  margin-top: 1rem;
+}
+input,
+select,
+button {
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+}
+button {
+  cursor: pointer;
+  transition: 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+}
+.calculate-btn {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+.calculate-btn:hover {
+  background: var(--secondary);
+}
+.button-group {
+  display: flex;
+  gap: 1rem;
+
+  margin-top: 1rem;
+}
+.theme-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+.remove-btn {
+  background: crimson;
+  color: white;
+  border: none;
+}
+.result-box {
+  margin-top: 1rem;
+  line-height: 2;
+}
+footer {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+.error {
+  color: crimson;
+  margin-top: 0.5rem;
+}
+@media (max-width: 768px) {
+  .subject-row {
+    grid-template-columns: 1fr;
+  }
+  .sticky-card {
+    position: sticky;
+    bottom: 0;
+  }
+  .button-group {
+    flex-direction: column;
+  }
+}
